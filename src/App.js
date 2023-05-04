@@ -1,53 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import Header from './Components/Header';
-import axios from 'axios';
-import MovieScreen from './Components/MovieScreen';
-import Watchlist from './Components/Watchlist';
-
+import "./App.css";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Header from "./Components/Header";
+import MovieScreen from "./Components/MovieScreen";
+import Watchlist from "./Components/Watchlist";
 
 function App() {
+  const [list, setList] = useState([]);
   const [movieList, setMovieList] = useState([]);
-  const [watchList, setWatchList] = useState([]);
   const [page, setPage] = useState(1);
 
-  const addMovie = (movie) => setWatchList([...movieList, movie])
+  const addMovie = (movie) => setList([...list, movie]);
 
   const removeMovie = (movie) => {
-    const newState = movieList.filter((mov) => {
-      return mov !== movie
-    })
-    setMovieList(newState)
-  } 
+    const newState = list.filter((mov) => {
+      return mov !== movie;
+    });
+    setList(newState);
+  };
 
-  const getData = (props) => {
+  const getData = () => {
     axios
-      .get(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${page}`)
+      .get(
+        `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${page}`
+      )
       .then((res) => {
-        console.log(res.data.results)
-        setMovieList(res.data.results)
-      })
+        console.log(res.data.results);
+        setMovieList(res.data.results);
+      });
   };
 
   useEffect(() => {
     getData();
   }, [page]);
 
-
-
   return (
     <div className="App">
       <Header />
       <main>
-        <MovieScreen 
-        addMovie={addMovie}
-        movieList={movieList}
-        page={page}
-        setPage={setPage}
-        watchList={watchList}
-        removeMovie={removeMovie}
+        <MovieScreen
+          addMovie={addMovie}
+          movieList={movieList}
+          page={page}
+          setPage={setPage}
+          list={list}
+          removeMovie={removeMovie}
         />
-        <Watchlist list={movieList} removeMovie={removeMovie}/>
+        <Watchlist list={list} removeMovie={removeMovie}/>
       </main>
     </div>
   );
